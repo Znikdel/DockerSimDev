@@ -172,6 +172,12 @@ typedef struct connection_t connection_T;
     };
 typedef vmStatesLog vmStatesLog_t;
 
+struct containerStatesLog{
+        string container_state;                          // The code of the state.
+        double init_time_M;                        // when the new change state has begun (in Minutes)
+    };
+typedef containerStatesLog containerStatesLog_t;
+
 
 /************************* Structs *************************/
 

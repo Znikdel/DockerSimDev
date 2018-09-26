@@ -24,22 +24,25 @@
 #include "Machine.h"
 #include "ElementType.h"
 #include "VMSyscallManager.h"
+#include "AbstractSyscallManager.h"
 
-class Container : public Machine{
+
+class Container : virtual public icancloud_Base{
 
 protected:
 
      int pending_operation;             // defined as: PENDING_STORAGE || PENDING_SHUTDOWN || PENDING_STARTUP
-     string vmName;                     // Virtual machine type
+     string containerName;                     // Container Tag
      int userID;                        // User identification obtained from getId() from omnetpp.
-
-     //identify where is the VM and who is its property.
+     string containerState;         //running - stopped
+     //identify where is the Container and who is its property.
      int nodeName;											    // To identify which node is.
+     string vmName;                                             // To identify which VM is.
      string nodeSetName;										// To identify the set.
-     string ip;                                                 // IP address of the VM
+     string ip;                                                 // IP address of the container
 
-     vector <vmStatesLog_t*> states_log;    // To log the states of the vms (composed by the code of the state and when a change is perfomed (in minutes).
-                                            // Each state changed will generate a new vmStatesLog entry-
+     vector <containerStatesLog_t*> states_log;    // To log the states of the containers (composed by the code of the state and when a change is perfomed (in minutes).
+                                            // Each state changed will generate a new containerStateLog entry-
 
 public:
 
@@ -47,7 +50,7 @@ public:
     /*
     * Destructor
     */
-    virtual ~VM();
+    virtual ~Container();
 
     /*
     * Initialization of the module
@@ -70,36 +73,43 @@ public:
      */
     void setUid(int user){userID = user;};
     int getUid (){return userID;}
-    string getName () {return vmName;}
-    void setName(string  newName){vmName = newName;};
+    string getName () {return containerName;}
+    void setName(string  newName){containerName = newName;};
 
     void changeState(string newState);
-    bool isAppRunning(int pId);
+    bool isContainerRunning(int pId);
+    string getState(){return containerState;};
 
     /*
-     * Getter and setter for the Node type and index where the VM is placed into
+     * Getter and setter for the Node type and VM where the container is placed into
      */
     int getNodeName (){return nodeName;};
+    int getVmName (){return vmName;};
+    void setVmName(string newvmName){vmName=newvmName;};
     void setNodeName (int newNodeName){nodeName = newNodeName;};
     string getNodeSetName (){return nodeSetName;};
     void setNodeSetName (string newNodeSetName){nodeSetName = newNodeSetName;};
 
     /*
-     * Destroy the VM module and free the resources to be requested by other users to allocate new virtual machines
+     * Destroy the container module
      */
-    void shutdownVM ();
+    void create_container(); // create a new container
+    void stop_Container ();  // container state: exited exit container, stops the container but images and volumes are still available
+    void start_Container(); // start a stopped container
+    void remove_Container();
+    void run_Container();
 
     /*
      *  Operate with log states
      */
     int getLogStatesQuantity (){return states_log.size();};
-    vmStatesLog_t* getLogState (int i){return (*(states_log.begin() + i));};
+    containerStatesLog_t* getLogState (int i){return (*(states_log.begin() + i));};
 
     /*
      * Setter for manager
      */
-    void setManager(icancloud_Base* manager);
+    //void setManager(icancloud_Base* manager);
 
 };
 
-#endif /* VM_H_ */
+#endif /* CONTAINER_H_ */

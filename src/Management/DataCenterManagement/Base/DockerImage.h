@@ -27,12 +27,13 @@ class DockerImage;
 class DockerImage : virtual public icancloud_Base {
 
    /* id
+    * user_id owner
+    * vector of user_ids who can access/use this image
     * machine id  // host id
     * memory  // how much memory this image needs
     * baseImageID  default is 0 means no base image
     *
-    * create image
-    * remove image
+    *
     *
 
     */

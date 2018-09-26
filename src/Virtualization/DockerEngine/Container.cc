@@ -13,22 +13,23 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-#include "VM.h"
+#include "Container.h"
 
-Define_Module(VM);
+Define_Module(Container);
 
 
-VM::~VM() {
+Container::~Container() {
     states_log.clear();
 
 }
 
-void VM::initialize(){
+void Container::initialize(){
 
     // Define ..
-     cModule* osMod;
-     string vmTypeName;
-     Machine::initialize();
+    // cModule* osMod;
+   //  string ContainerTypeName;
+    // Machine::initialize();
+     icancloud_Base::initialize();
 
     // Init ..
      states_log.clear();
@@ -36,72 +37,81 @@ void VM::initialize(){
      userID = -1;
      nodeName = -1;
      nodeSetName = "";
-     vmName = "";
+     containerName = "";
+     containerState="";
 
-     osMod = getSubmodule("osModule")->getSubmodule("syscallManager");
-     os = dynamic_cast<VMSyscallManager*>(osMod);
-     Machine::changeState(MACHINE_STATE_OFF);
+    // osMod = getSubmodule("osModule")->getSubmodule("syscallManager");
+    // os = dynamic_cast<ContainerSyscallManager*>(osMod);
+    // Machine::changeState(MACHINE_STATE_OFF);
 
 }
 
-void VM::finish(){
+void Container::finish(){
 
-    Machine::finish();
+    icancloud_Base::finish();
 }
 
-void VM::changeState(string newState){
-    vmStatesLog_t* log;
+void Container::changeState(string newState){
+    ContainerStatesLog_t* log;
     string oldstate;
-
+    containerState=newState;
     if (states_log.size() == 0 ){
 
-        log = new vmStatesLog_t();
-        log->vm_state = newState;
+        log = new ContainerStatesLog_t();
+        log->Container_state = newState;
         log->init_time_M = simTime().dbl() / 60;
 
         states_log.push_back(log);
     } else {
-       oldstate = (*(states_log.end() -1))->vm_state;
+       oldstate = (*(states_log.end() -1))->Container_state;
 
        if (strcmp(oldstate.c_str(), newState.c_str()) != 0){
-           log = new vmStatesLog_t();
-           log->vm_state = newState;
+           log = new ContainerStatesLog_t();
+           log->Container_state = newState;
            log->init_time_M = simTime().dbl() / 60;
 
            states_log.push_back(log);
        }
     }
 
-    Machine::changeState(newState);
+
 };
 
 
-void VM::shutdownVM (){
+void Container::stop_Container(){
 
-	// Define ..
-		vector<int>::iterator jobIt;
+	changeState("stopped");
 
-	// Begin ..
-	if ((!equalStates(getState(),MACHINE_STATE_OFF) || (!(equalStates(getState(),MACHINE_STATE_IDLE))))){
+}
+void Container::start_Container(){
+if (containerState=="stopped")
+    {
+        changeState("running");
+    }
 
-	    os->removeAllProcesses();
-	}
 
-	if (!equalStates(getState(),MACHINE_STATE_OFF)){
-	    Machine::changeState(MACHINE_STATE_OFF);
-	}
+}void Container::create_container(){
 
-	 pending_operation = NOT_PENDING_OPS;
+    //TO Do
+    // take care of image : pulling image
+    initialize();
+
+}
+void Container::run_Container(){
+
+    changeState("running");
+
+}
+void Container::remove_Container(){
+
+    //TO DO
+    //remove container resources
+    finish();
+}
+
+bool Container::isContainerRunning(int pId){
+    if (containerState=="running") return true;
+    else return false;
 
 }
 
-bool VM::isAppRunning(int pId){
-
-
-	return os->isAppRunning(pId);
-}
-
-void VM::setManager(icancloud_Base* manager){
-    Machine::setManager(manager);
-    os->setManager(manager);
-}

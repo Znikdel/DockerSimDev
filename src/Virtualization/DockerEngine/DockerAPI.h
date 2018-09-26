@@ -8,4 +8,6 @@
  * run containers
  * exit containers
  * remove containers
+ * remove images
+ * stop containers
  */
