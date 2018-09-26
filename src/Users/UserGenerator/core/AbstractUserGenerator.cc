@@ -210,7 +210,7 @@ void AbstractUserGenerator::createUser (){
                 printf("AbstractUserGenerator::createUser->%s\n",userID.c_str());
 
                 behaviorPath << "icancloud.src.Users.Profiles." << behavior.c_str() << "." << behavior.c_str();
-
+                cout<<"behavior:   "<<behavior.c_str()<<endl;
 			// the user behaviorMod is created in the root of the cloud (cloud.manager.userGenerator.user)
                 modBehavior = cModuleType::get (behaviorPath.str().c_str());
 
@@ -253,7 +253,7 @@ void AbstractUserGenerator::createUser (){
 
                    // Clone job definitions to be linked to user's waiting queue
                        jobSetSize = userJobSet.size();
-
+                       cout<<"jobSetSize"<<jobSetSize<<endl;
                        for (j = 0; ((unsigned int)j)< jobSetSize; j++){
                            jobSelection* jobSelect;
                            UserJob* newJob;
@@ -262,11 +262,13 @@ void AbstractUserGenerator::createUser (){
                             // Get the job
                                jobSelect = (*(userJobSet.begin()+j));
                                rep = jobSelect->replicas;
+                               cout<<"j=" <<j<<"---->app name ->"<<jobSelect->appName<<endl;
 
                            for (k = 0; ((int)k) < rep ;k++){
                                // Clone the job
                                ostringstream appNameBuild;
                                appNameBuild << jobSelect->appName.c_str() << "_" << k << ":" << userID;
+                               cout<<jobSelect->appName.c_str() << "_" << k << ":" << userID<<endl;
                                newJob = cloneJob (jobSelect->job, behaviorMod, appNameBuild.str().c_str());
                                // Insert into users waiting queue
                                user->addParsedJob(newJob);

@@ -23,7 +23,7 @@ GeneralUser::~GeneralUser() {
 }
 
 void GeneralUser::initialize(){
-
+        cout<<"GeneralUser::initialize()"<<endl;
         printVMs = par("printVMs").boolValue();
         printJobs = par("printJobs").boolValue();
         AbstractCloudUser::initialize();

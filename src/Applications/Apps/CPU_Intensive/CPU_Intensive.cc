@@ -16,6 +16,8 @@ void CPU_Intensive::initialize(){
     timeout = 1.0;
 
 	// Set the moduleIdName
+    cout<<"CPU_Intensive."<<endl;
+    //printf("CPU_Intensive.");
 	osStream << "CPU_Intensive." << getId();
 	moduleIdName = osStream.str();
 
@@ -54,6 +56,7 @@ void CPU_Intensive::initialize(){
 
 void CPU_Intensive::finish(){
     // Finish the super-class
+    printf("CPU_Intensive finished.");
    UserJob::finish();
 
 }

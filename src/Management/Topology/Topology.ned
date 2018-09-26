@@ -17,14 +17,14 @@ module Topology
 {
     parameters:
         int computeNodeQuantity;
-		int storageNodeQuantity;
+        int storageNodeQuantity;
     submodules:
-        computeNode[computeNodeQuantity]: ComputeNode {         
-                @display("i=msg/job;p=98,129,row");
+        computeNode[computeNodeQuantity]: ComputeNode {
+            @display("i=msg/job;p=98,129,row");
         }
         storageNode[storageNodeQuantity]: StorageNode {
             parameters:
-                @display("i=msg/job;p=98,129,row");
+                @display("i=msg/job;p=108,38,row");
         }
 
 }

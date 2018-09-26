@@ -21,7 +21,7 @@ AbstractUser::~AbstractUser() {
 void AbstractUser::initialize(){
 
     userStorage::initialize();
-
+    cout<<"AbstractUser::initialize()"<<endl;
         // Initialize structures and parameters
             waitingQueue = new JobQueue();
             waitingQueue->clear();
@@ -41,7 +41,8 @@ void AbstractUser::initialize(){
 }
 
 void AbstractUser::finish(){
-    userStorage::initialize();
+    //userStorage::initialize();
+    userStorage::finish();
 }
 
 bool AbstractUser::finalizeUser (){

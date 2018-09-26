@@ -21,6 +21,8 @@ AbstractCloudUser::~AbstractCloudUser() {
 
 void AbstractCloudUser::initialize(){
 
+    cout<<"AbstractCloudUser::initialize()"<<endl;
+
         // Initialize structures and parameters
             vms_waiting_remote_st.clear();
 

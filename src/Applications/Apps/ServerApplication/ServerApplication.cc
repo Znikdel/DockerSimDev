@@ -23,6 +23,8 @@ void ServerApplication::initialize(){
     timeout = 1.0;
 
     // Set the moduleIdName
+    cout<<"ServerApplication."<<endl;
+
 	osStream << "ServerApplication." << getId();
 	moduleIdName = osStream.str();
 
@@ -61,6 +63,8 @@ void ServerApplication::initialize(){
 void ServerApplication::startExecution (){
 
     API_OS::startExecution();
+    Enter_Method_Silent();  //zahra nikdel
+
 	// Create SM_WAIT_TO_EXECUTE message for delaying the execution of this application
     // Initialize ..
     newIntervalEvent = new cMessage ("intervalEvent");
@@ -285,6 +289,12 @@ void ServerApplication::printResults (){
 	//Init..
 		simEndTime = simTime();
 		runEndTime = time (NULL);
+		printf("App [%s] - Simulation time:%f - Real execution time:%f - IO:%f  CPU:%f",
+        moduleIdName.c_str(),
+        (simEndTime-simStartTime).dbl(),
+        (difftime (runEndTime,runStartTime)),
+        total_service_IO.dbl(),
+        total_service_CPU.dbl());
 
 		showResultMessage ("App [%s] - Simulation time:%f - Real execution time:%f - IO:%f  CPU:%f",
 		                           moduleIdName.c_str(),
