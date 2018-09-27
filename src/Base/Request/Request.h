@@ -43,6 +43,7 @@ protected:
 
     int userId;
     int vmId;
+    int contId; //container id
     int jobId;
 
     string ip;
@@ -66,6 +67,9 @@ public:
 
     void setPid(int jId){vmId = jId;};
     int getPid(){return vmId;};
+
+    void setCPid(int cId){contId = cId;};
+    int getCid(){return contId;};
 
     void setSPid(int jId){jobId = jId;};
     int getSPid(){return jobId;};

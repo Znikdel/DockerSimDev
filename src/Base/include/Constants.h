@@ -17,6 +17,7 @@
 #define REQUEST_PENDING         1
 #define REQUEST_SUCCESS         2
 #define REQUEST_UNSUCCESSFUL    3
+#define REQUEST_DROPPED         4
 
  /**  ---------------- Requests operation -------------------*/
 #define NOT_REQUEST            -1           // This is the initial value of the request
@@ -42,6 +43,20 @@
 #define PENDING_SHUTDOWN                         2
 #define PENDING_STARTUP                          3
 
+/** ---------------- Requests Container operation -------------------*/
+#define REQUEST_START_DOCKERENGINE        8  // This is a request for get virtual resources FOR CONTAINERS
+#define REQUEST_START_CONTAINER_JOB       9  // This is a request for
+#define REQUEST_CONTAINER_LOCAL_STORAGE   10 // This is the request for local storage AND FILE SYSTEM FOR CONTAINER
+#define REQUEST_STOP_CONTAINER            11 // This is the request to stop a container container is in storage but doesn't consume memory or cpu
+#define REQUEST_REMOVE_CONTAINER          12 // This is the request to REMOVE a container and free resources
+
+
+// ---------------- Container operations -------------------
+#define NOT_PENDING_CONTAINER_OPS               4
+#define PENDING_CONTAINER_STORAGE               5
+#define PENDING_CONTAINER_STOP                  6
+#define PENDING_CONTAINER_REMOVE                7
+#define PENDING_CONTAINER_STARTUP               8
 
 //--------------------------DEBUG STATES --------------
 //

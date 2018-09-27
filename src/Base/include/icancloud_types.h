@@ -178,7 +178,13 @@ struct containerStatesLog{
     };
 typedef containerStatesLog containerStatesLog_t;
 
-
+struct image{
+          AbstractUser* userPtr;
+          int imageId;
+          string imageName;
+          double imageSize_MB;
+      };
+      typedef struct image image_T;
 /************************* Structs *************************/
 
 /**
