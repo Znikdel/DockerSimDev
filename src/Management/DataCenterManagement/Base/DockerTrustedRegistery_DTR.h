@@ -38,14 +38,96 @@ This is part of what makes images so lightweight, small, and fast, when compared
 #ifndef DOCKERTRUSTEDREGISTERY_DTR_H_
 #define DOCKERTRUSTEDREGISTERY_DTR_H_
 
-#include "MachinesMap.h"
+#include "Request.h"
+#include "VM.h"
 #include "AbstractNode.h"
 #include "icancloud_Base.h"
 
 class DockerTrustedRegistery_DTR;
 
 class DockerTrustedRegistery_DTR : virtual public icancloud_Base {
+protected:
 
+    /*
+     *  This second level is to manage virtualization. If the operation came from a not virtualized
+     *  environment spId will be equal to pId.
+     */
+    vector <image_T*> imageList;
+
+
+        struct subprocessOperations_t{
+            int spId;
+            int operation;
+           vector<connection_T*> pendingOperation;
+           int numberOfConnections;
+        };
+        typedef struct subprocessOperations_t subprocessOperations;
+
+        struct processOperations_t{
+            int pId;
+            vector<subprocessOperations*> pendingOperation;
+        };
+        typedef struct processOperations_t processOperations;
+
+        struct pendingImageRequest_t{
+            int uId;
+            vector <processOperations*> processOperation;
+        };
+        typedef struct pendingImageRequest_t PendingImageRequest;
+
+      // Struct for delete fs from a user
+   /*       struct PendingRemoteStorageDeletion{
+              int uId;
+              int pId;
+              int remoteStorageQuantity;
+          };*/
+
+      // Struct for waiting to close network connections
+          struct PendingConnectionDeletion{
+              int uId;
+              int pId;
+              int contId;
+              int connectionsQuantity;
+          };
+
+protected:
+      /** This vector allocates the storage requests for create FS or files until they will be realized*/
+      vector <PendingImageRequest*> pendingImageRequests;
+
+      /** This vector allocates the storage requests until it will be performed*/
+      //vector <PendingRemoteStorageDeletion*> pendingRemoteStorageDeletion;
+
+      /* this vector allocates the connections until it will be performed */
+      vector<PendingConnectionDeletion*> connectionsDeletion;
+
+      // The number of Parallel file system remote servers (from .ned parameter)
+      //int numberOfPFSRemoteServers;
+
+
+    /********************************************************************************************
+     *              Operations for managing the storage of the system
+     *********************************************************************************************/
+
+    /*
+   *  Create the filesystem and load a set of files (if there exists any) included into the the request.
+   *  All the parameters are included into the request. The destination node, the files and the structure of the file system
+   */
+    void manageImageRequest(RequestContainer* cont_req, VM* vmHost);
+
+
+    void connection_realized(RequestContainer* attendeed_req);
+
+
+public:
+
+    /*
+     * It notify to the manager any event
+     */
+    virtual void notifyManager(icancloud_Message* msg);
+
+    /*
+     * This method returns the quantity of remote servers that will be used when a virtual machine request resources.
+     */
 protected:
 
    /* struct image{
@@ -57,7 +139,6 @@ protected:
       typedef struct image image_T; */
 
       /** Structure to manage the images */
-          vector <image_T*> imageList;
     //bool isBaseImage;
     virtual ~DockerTrustedRegistery_DTR();
 
