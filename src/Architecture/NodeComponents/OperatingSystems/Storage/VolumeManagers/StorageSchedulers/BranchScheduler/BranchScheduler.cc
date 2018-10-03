@@ -112,6 +112,8 @@ void BranchScheduler::processBranches (){
 void BranchScheduler::sendRequestMessage (icancloud_Message *sm, cGate* gate){
 
 	// If trace is empty, add current hostName, module and request number
+  //  cout<<"BranchScheduler::sendRequestMessage "<<endl;
+
 	if (sm->isTraceEmpty()){
 		sm->addNodeToTrace (getHostName());
 		updateMessageTrace (sm);

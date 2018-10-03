@@ -15,7 +15,7 @@
 
 #include "Container.h"
 
-Define_Module(Container);
+//Define_Module(Container);
 
 
 Container::~Container() {
@@ -52,22 +52,22 @@ void Container::finish(){
 }
 
 void Container::changeState(string newState){
-    ContainerStatesLog_t* log;
+    containerStatesLog_t* log;
     string oldstate;
     containerState=newState;
     if (states_log.size() == 0 ){
 
-        log = new ContainerStatesLog_t();
-        log->Container_state = newState;
+        log = new containerStatesLog_t();
+        log->container_state = newState;
         log->init_time_M = simTime().dbl() / 60;
 
         states_log.push_back(log);
     } else {
-       oldstate = (*(states_log.end() -1))->Container_state;
+       oldstate = (*(states_log.end() -1))->container_state;
 
        if (strcmp(oldstate.c_str(), newState.c_str()) != 0){
-           log = new ContainerStatesLog_t();
-           log->Container_state = newState;
+           log = new containerStatesLog_t();
+           log->container_state = newState;
            log->init_time_M = simTime().dbl() / 60;
 
            states_log.push_back(log);

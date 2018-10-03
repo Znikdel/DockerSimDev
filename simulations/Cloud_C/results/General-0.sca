@@ -1,14 +1,14 @@
 version 2
-run General-0-20180925-19:12:33-4248
+run General-0-20181001-23:39:27-673
 attr configname General
-attr datetime 20180925-19:12:33
+attr datetime 20181001-23:39:27
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars ""
 attr iterationvars2 $repetition=0
 attr measurement ""
 attr network Cloud_C
-attr processid 4248
+attr processid 673
 attr repetition 0
 attr replication #0
 attr resultdir results

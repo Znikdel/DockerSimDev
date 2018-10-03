@@ -189,7 +189,10 @@ int VMSyscallManager::createProcess(icancloud_Base* j, int uid){
         int newIndexFrom = fromAppGates->newGate("fromApps");
         int newIndexTo = toAppGates->newGate("toApps");
 
-        mControllerPtr->linkNewApplication(jobAppModule, toAppGates->getGate(newIndexTo), fromAppGates->getGate(newIndexFrom));
+        // to be checked
+
+        mControllerPtr->linkNewApplication(jobAppModule, toAppGates->getGate(newIndexTo), fromAppGates->getGate(newIndexFrom),job->getisDockerized());
+     //   mControllerPtr->linkNewContainer(dockerdaemon,jobAppModule, toAppGates->getGate(newIndexTo), fromAppGates->getGate(newIndexFrom));
 
         processRunning* proc;
         proc = new processRunning();
@@ -206,9 +209,10 @@ int VMSyscallManager::createProcess(icancloud_Base* j, int uid){
 void VMSyscallManager::removeProcess(int pId){
 
         icancloud_Base* job = deleteJobFromStructures(pId);
-
+        UserJob* ujob;
+        ujob=dynamic_cast <UserJob*>(job);
         if (job != NULL){
-            int position = mControllerPtr->unlinkApplication(job);
+            int position = mControllerPtr->unlinkApplication(job,ujob->getisDockerized());
             fromAppGates->freeGate(position);
             toAppGates->freeGate(position);
         }

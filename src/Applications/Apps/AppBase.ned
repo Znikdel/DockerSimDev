@@ -19,7 +19,7 @@ module AppBase
         int copies = default(0);		// Number of replicas that will be launched at system 
         int numFSRoutes;				// Number of different routes that applications will need  
         int numFiles;					// Number of different files that applications will need 
-
+		bool isDockerized = default(true);
     submodules:
 
         app: <appType> like IAPP {

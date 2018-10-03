@@ -176,6 +176,9 @@ static const int MEMORY_DATA = 426;
 
 /** operation overhead*/
 static const int VM_OVERHEAD = 427;
+static const int SM_STOP_AND_DOWN_CONTAINER = 428;
+static const int SM_CONTAINER_ACTIVATION = 429;
+
 
 // ---------- MPI Operations (Trace Method) ---------- //
 

@@ -500,6 +500,7 @@ string icancloud_Message::getRemoteOperation_string (){
 
 
 bool icancloud_Message::isTraceEmpty (){
+   // printf("icancloud_Message::isTraceEmpty ");
 	return (trace.empty());
 }
 

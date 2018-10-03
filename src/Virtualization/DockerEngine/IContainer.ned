@@ -10,6 +10,6 @@ moduleinterface IContainer
   
         int numCores; // default is the same as VM host but it is possible to have constraints												
         double memorySize_MB;
-        int imageSize_GB;  // takes from storage
+        int storageSize_GB;  // takes from storage
 
 }

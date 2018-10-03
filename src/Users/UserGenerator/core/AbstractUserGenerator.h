@@ -53,7 +53,8 @@ protected:
         struct jobSelection{
             string appName;                         // Application Name
             UserJob* job;                          // Job definition
-            int replicas;                           // Quantity
+            int replicas;  // Quantity
+            bool isDockerized;
         };
 
         // Structures of jobs of user

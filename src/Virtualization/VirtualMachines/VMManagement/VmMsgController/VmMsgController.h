@@ -18,6 +18,7 @@
 #define VMMSGCONTROLLER_H_
 
 #include "icancloud_Base.h"
+#include "DockerDaemon.h"
 
 class VmMsgController : public icancloud_Base {
 
@@ -81,12 +82,13 @@ public:
 	/*
 	 * This method links a new applications.
 	 */
-	void linkNewApplication(cModule* jobAppModule, cGate* scToApp, cGate* scFromApp);
+	void linkNewApplication(cModule* jobAppModule, cGate* scToApp, cGate* scFromApp, bool isDockerized);
 
 	/*
 	 * This method unlink the given application as parameter. It disconnects all the gates (4)
 	 */
-	int unlinkApplication(cModule* jobAppModule);
+	int unlinkApplication(cModule* jobAppModule, bool isDockerized);
+
 
 	/*
 	 * This method set the user identification and the VM identification to be setted at each message from app to the OS

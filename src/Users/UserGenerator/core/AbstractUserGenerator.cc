@@ -140,10 +140,15 @@ void AbstractUserGenerator::initialize(){
                     jobSel = new jobSelection();
                     jobSel->replicas = getParentModule()->getSubmodule("appDefinition")->getSubmodule("application",i)->par("copies").longValue();
                     jobSel->appName = getParentModule()->getSubmodule("appDefinition")->getSubmodule("application",i)->par("name").stringValue();
+                    jobSel->isDockerized = getParentModule()->getSubmodule("appDefinition")->getSubmodule("application",i)->par("isDockerized").boolValue();
+                    cout<<"job is dockerized jobsel--->"<< jobSel->isDockerized<<endl;
+
                     auxMod = getParentModule()->getSubmodule("appDefinition")->getSubmodule("application",i)->getSubmodule("app");
                     jobSel->job = dynamic_cast<UserJob*> (auxMod);
 
                     jobSel->job->setOriginalName(jobSel->appName);
+                    jobSel->job->setisDockerized(jobSel->isDockerized);
+
                     jobSel->job->setAppType(getParentModule()->getSubmodule("appDefinition")->getSubmodule("application",i)->par("appType").stringValue());
                     jobSel->job->setNumCopies(jobSel->replicas);
 
@@ -263,6 +268,7 @@ void AbstractUserGenerator::createUser (){
                                jobSelect = (*(userJobSet.begin()+j));
                                rep = jobSelect->replicas;
                                cout<<"j=" <<j<<"---->app name ->"<<jobSelect->appName<<endl;
+                          //     cout<<"j=" <<j<<"---->isDockerized ->"<<jobSelect->isDockerized<<endl;
 
                            for (k = 0; ((int)k) < rep ;k++){
                                // Clone the job
@@ -389,6 +395,7 @@ UserJob* AbstractUserGenerator::cloneJob (UserJob* app, cModule* userMod, string
         cModuleType *modType;
         std::ostringstream appPath;
         int i, numParameters, size;
+     //   cout<<"---->isDockerized in clone job->"<<app->getisDockerized()<<endl;
 
     // Init ..
         appPath << app->getNedTypeName();
@@ -418,7 +425,7 @@ UserJob* AbstractUserGenerator::cloneJob (UserJob* app, cModule* userMod, string
         newJob->setAppType(appName.c_str());
         newJob->setOriginalName(appName.c_str());
         newJob->setAppType(app->getAppType());
-
+        newJob->setisDockerized(app->getisDockerized());
         user =  check_and_cast <AbstractUser*>  (userMod);
         newJob->setUpUser(user);
 

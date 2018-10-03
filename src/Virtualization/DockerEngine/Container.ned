@@ -24,7 +24,7 @@ module Container like IContainer
 
         int numCores;												// Number of CPUs
         double memorySize_MB;										// Amount of memory in MiB
-        int imageSize_GB;											// Amount of storage in GiB
+        int storageSize_GB;											// Amount of storage in GiB
 
         int numStorageSystems = default(1);							// Number of Block Servers     
         int numNetworkInterfaces = default(1);						// Number of network interfaces

@@ -118,6 +118,8 @@ class icancloud_Message_Base : public ::cPacket
     int result_var;
     int uid_var;
     int pid_var;
+    int conid_var;   //container id
+
 
   private:
     void copy(const icancloud_Message_Base& other);

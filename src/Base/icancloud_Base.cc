@@ -177,7 +177,8 @@ void icancloud_Base::finish (){
 void icancloud_Base::sendRequestMessage (icancloud_Message *sm, cGate* gate){
 
 	// If trace is empty, add current hostName, module and request number
-	if (sm->isTraceEmpty()){
+//cout<<"icancloud_Base::sendRequestMessage "<<endl;
+if (sm->isTraceEmpty()){
 		sm->addNodeToTrace (getHostName());
 		updateMessageTrace (sm);
 	}

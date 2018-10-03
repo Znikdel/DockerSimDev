@@ -61,6 +61,8 @@ void VmMsgController::initialize(){
 		fromApps = new cGateManager(this);
 		toApps = new cGateManager(this);
 
+		//daemon= new DockerDaemon(this);
+
 }
 
 void VmMsgController::finish(){
@@ -309,8 +311,11 @@ void VmMsgController::updateCounters (icancloud_Message* msg, int quantity){
 	}
 }
 
-void VmMsgController::linkNewApplication(cModule* jobAppModule, cGate* scToApp, cGate* scFromApp){
+void VmMsgController::linkNewApplication(cModule* jobAppModule, cGate* scToApp, cGate* scFromApp, bool isDockerized){
 
+
+       cout<<"job is dockerized--->"<< isDockerized<<endl;
+       if (!isDockerized){
     // Connections to App
        int idxToApps = toApps->newGate("toApps");
        toApps->connectOut(jobAppModule->gate("fromOS"), idxToApps);
@@ -324,13 +329,35 @@ void VmMsgController::linkNewApplication(cModule* jobAppModule, cGate* scToApp, 
 
        int idxFromOS = fromOSApps->newGate("fromOSApps");
        fromOSApps->connectIn(scToApp, idxFromOS);
+       }
+       else
+       {
+           // Connections to SyscallManager
+                  int idxToOs = toOSApps->newGate("toOSApps");
+                  toOSApps->connectOut(scFromApp, idxToOs);
+
+                  int idxFromOS = fromOSApps->newGate("fromOSApps");
+                  fromOSApps->connectIn(scToApp, idxFromOS);
+
+                  // Connections to docker daemon
+                  int idxToApps = toApps->newGate("toApps");
+               //   cGate* todaemon = this->getParentModule()->getSubmodule("dockerEngine")->myNewGate(fromOSApps);
+               //   toApps->connectOut(this->getParentModule()->getSubmodule("dockerEngine")->gate("fromOSApps",idxToApps), idxToApps);
+                   cout<<"Parent module of msg controller"<< this->getParentModule()->getSubmodule("dockerEngine")->getName()<<endl;
+                  int idxFromApps = fromApps->newGate("fromApps");
+                 // fromApps->connectIn(this->getParentModule()->getSubmodule("dockerEngine")->gate("toOSApps",idxFromApps), idxFromApps);
+                  DockerDaemon* daemon;
+                  daemon= dynamic_cast <DockerDaemon*>(this->getParentModule()->getSubmodule("dockerEngine"));
+                  daemon->linkNewContainer(jobAppModule,toApps->getGate(idxToApps),fromApps->getGate(idxFromApps));
+       }
 
 }
 
-int VmMsgController::unlinkApplication(cModule* jobAppModule){
+int VmMsgController::unlinkApplication(cModule* jobAppModule, bool isDockerized){
 
     int gateIdx = jobAppModule->gate("fromOS")->getPreviousGate()->getId();
     int position = toApps->searchGate(gateIdx);
+    if (!isDockerized){
 
         toOSApps->freeGate(position);
         toApps->freeGate(position);
@@ -338,6 +365,20 @@ int VmMsgController::unlinkApplication(cModule* jobAppModule){
    // Connections to SyscallManager
         fromApps ->freeGate(position);
         fromOSApps ->freeGate(position);
+    }
+    else
+    {
+        toOSApps->freeGate(position);
+               toApps->freeGate(position);
+
+          // Connections to SyscallManager
+               fromApps ->freeGate(position);
+               fromOSApps ->freeGate(position);
+               DockerDaemon* daemon;
+               daemon= dynamic_cast <DockerDaemon*>(this->getParentModule()->getSubmodule("dockerEngine"));
+               daemon->unlinkContainer(jobAppModule);
+
+    }
 
    return position;
 

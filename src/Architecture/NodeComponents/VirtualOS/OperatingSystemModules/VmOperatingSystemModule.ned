@@ -18,6 +18,7 @@ import icancloud.src.Architecture.NodeComponents.OperatingSystems.Storage.Virtua
 import icancloud.src.Architecture.NodeComponents.OperatingSystems.Storage.FileSystems.FSModule;
 import icancloud.src.Architecture.NodeComponents.OperatingSystems.Storage.VolumeManagers.VolumeManagerModule;
 import icancloud.src.Virtualization.VirtualMachines.VMManagement.VmMsgController.VmMsgController;
+import icancloud.src.Virtualization.DockerEngine.DockerDaemon;
 
 module VmOperatingSystemModule like IOperatingSystem
 {
@@ -33,7 +34,7 @@ module VmOperatingSystemModule like IOperatingSystem
         string syscallManagerType = default("VMSyscallManager");
         string cpuSchedulerType = default("CPU_Scheduler_FIFO");		// CPU Service type   
 
-        @display("i=icons/OOSS;bgb=306,405");
+        @display("i=icons/OOSS;bgb=436,405");
     gates:
         input fromApps[];			// Input gates from Applications
         input fromStorageSystem[];	// Input gates from Storage Servers
@@ -52,7 +53,7 @@ module VmOperatingSystemModule like IOperatingSystem
 
 
     submodules:
-
+        
         syscallManager: <syscallManagerType> like ISyscallManager {
             parameters:
                 @display("p=74,147");
@@ -107,6 +108,17 @@ module VmOperatingSystemModule like IOperatingSystem
                 fromApps[];
                 toApps[];
         }
+
+        dockerEngine: DockerDaemon {
+            parameters:
+                @display("p=299,147");
+            gates:
+                fromOSApps[20];
+                toOSApps[20];
+                fromApps[20];
+                toApps[20];
+        }
+
 
     connections allowunconnected:
 

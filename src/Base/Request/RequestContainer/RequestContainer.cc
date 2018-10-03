@@ -38,7 +38,7 @@ RequestContainer::RequestContainer (int userID, int op, vector<Container*> newCo
     timesEnqueue = 0;
     state = 0;
     jobId = -1;
-    ContainerId = -1;
+ //   ContainerId = -1;
     connections.clear();
 }
 

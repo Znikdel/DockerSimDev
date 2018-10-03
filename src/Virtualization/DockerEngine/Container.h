@@ -84,7 +84,7 @@ public:
      * Getter and setter for the Node type and VM where the container is placed into
      */
     int getNodeName (){return nodeName;};
-    int getVmName (){return vmName;};
+    string getVmName (){return vmName;};
     void setVmName(string newvmName){vmName=newvmName;};
     void setNodeName (int newNodeName){nodeName = newNodeName;};
     string getNodeSetName (){return nodeSetName;};

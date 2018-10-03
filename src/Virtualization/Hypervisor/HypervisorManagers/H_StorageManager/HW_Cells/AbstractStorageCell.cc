@@ -505,6 +505,7 @@ void AbstractStorageCell::sendRemoteRequest (icancloud_App_IO_Message* subReques
 	subRequest->setNfs_connectionID(cell->getConnectionId(serverID_position));
 
 	// If trace is empty, add current hostName, module and request number
+	cout<<"AbstractStorageCell::sendRemoteRequest"<<endl;
 	if (subRequest->isTraceEmpty()){
 		subRequest->addNodeToTrace (getHostName());
 		updateMessageTrace (subRequest);

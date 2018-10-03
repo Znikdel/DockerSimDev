@@ -33,6 +33,7 @@ protected:
         string originalName;
         int jobState;
         int commId;
+        bool isDockerized;
 
 protected:
 
@@ -107,6 +108,9 @@ public:
 
         void setOriginalName(string name){originalName = name;};
         string getOriginalName(){return originalName;};
+        void setisDockerized(bool docker){isDockerized = docker;};
+        bool getisDockerized(){return isDockerized;};
+
         void setNumCopies(int copies){numCopies = copies;};
         int getNumCopies(){return numCopies;};
 

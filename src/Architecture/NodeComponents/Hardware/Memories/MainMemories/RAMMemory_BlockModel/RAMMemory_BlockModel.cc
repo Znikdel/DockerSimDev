@@ -422,6 +422,7 @@ void RAMMemory_BlockModel::sendRequest (icancloud_Message *sm){
 void RAMMemory_BlockModel::sendRequestWithoutCheck (icancloud_Message *sm){
 
 	// If trace is empty, add current hostName, module and request number
+    cout<<"RAMMemory_BlockModel::sendRequestWithoutCheck"<<endl;
 	if (sm->isTraceEmpty()){
 		sm->addNodeToTrace (getHostName());
 		updateMessageTrace (sm);

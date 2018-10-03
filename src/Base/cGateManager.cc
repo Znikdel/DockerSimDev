@@ -80,6 +80,8 @@ int cGateManager::newGate(string gateName){
 
 cGate* cGateManager::getGate(int index){
 
+  //  printf("cGateManager::getGate->%i",index);
+
     cGate* gate = NULL;
     if (!(*(gates.begin() + index))->gateHit){
         cRuntimeError("Error at position [%i] ->gateData::getGate\n", index);

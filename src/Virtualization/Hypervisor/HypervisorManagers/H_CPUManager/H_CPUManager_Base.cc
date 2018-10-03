@@ -166,7 +166,7 @@ void H_CPUManager_Base::processResponseMessage (icancloud_Message *sm){
     // Process the response message to the application that request it.
 
     int coreIdx = sm->getArrivalGate()->getIndex();
-
+//printf("coreIdx-->,%i",coreIdx);
     if ((sm->getOperation() != VM_OVERHEAD) && (computing_overhead != 0)){
         // allocate the incomming message to be sent when the overhead arrives
         icancloud_Message* msg = overheadStructure[coreIdx]->msg;
