@@ -178,7 +178,7 @@ int VMSyscallManager::createProcess(icancloud_Base* j, int uid){
     UserJob* job;
 
     job = dynamic_cast <UserJob*>(j);
-
+    cout<< "VMSyscallManager::createProcess  START"<<endl;
     if (job == NULL) throw cRuntimeError("SyscallManager::createJob, error with dynamic casting. Entry parameter cannot cast to jobBase.\n");
 
     //get the app previously created
@@ -201,21 +201,30 @@ int VMSyscallManager::createProcess(icancloud_Base* j, int uid){
         proc->toGateIdx = newIndexTo;
 
         processesRunning.push_back(proc);
+        cout<< "VM--->"<< getParentModule()->getFullPath()<<" has  "<< processesRunning.size()<<" processes"<<endl;
+        cout<< "VMSyscallManager::createProcess  END"<<endl;
 
         return newIndexFrom;
 
 }
 
 void VMSyscallManager::removeProcess(int pId){
+        cModule* jobAppModule;
+        cout<< "VMSyscallManager::removeProcess  START"<<endl;
 
         icancloud_Base* job = deleteJobFromStructures(pId);
         UserJob* ujob;
-        ujob=dynamic_cast <UserJob*>(job);
+
         if (job != NULL){
-            int position = mControllerPtr->unlinkApplication(job,ujob->getisDockerized());
+            ujob=dynamic_cast <UserJob*>(job);
+            jobAppModule = check_and_cast <cModule*> (job);
+        //    jobAppModule->changeParentTo(getParentModule());
+
+            int position = mControllerPtr->unlinkApplication(jobAppModule,ujob->getisDockerized());
             fromAppGates->freeGate(position);
             toAppGates->freeGate(position);
         }
+        cout<< "VMSyscallManager::removeProcess  END"<<endl;
 
 }
 

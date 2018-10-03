@@ -48,6 +48,7 @@ void Machine::finish(){
 
 void Machine::removeProcess (int pId){
     int numProcesses;
+    cout<<"Machine::removeProcess   START for user Pid "<<pId<<endl;
 
     os->removeProcess(pId);
     numProcesses = os->getNumProcessesRunning();
@@ -55,4 +56,6 @@ void Machine::removeProcess (int pId){
     if (numProcesses == 0){
         changeState(MACHINE_STATE_IDLE);
     }
+    cout<<"Machine::removeProcess   END for user Pid "<<pId<<endl;
+
 }

@@ -1,13 +1,9 @@
-
 #include "DockerApps.h"
-#define INPUT_FILE "/web.html"
-#define OUTPUT_FILE "/log.dat"
-#define MAX_FILE_SIZE 2000000000
-#define SM_WAIT_TO_EVENT  "Wait_To_Event"
+#define INPUT_FILE "/input.dat"
+#define OUTPUT_FILE "/output.dat"
+#define MAX_FILE_SIZE 2000000000000
 
 Define_Module(DockerApps);
-
-
 
 DockerApps::~DockerApps(){
 }
@@ -15,30 +11,27 @@ DockerApps::~DockerApps(){
 
 void DockerApps::initialize(){
 
-    // Init the super-class
-    UserJob::initialize();
-
     std::ostringstream osStream;
     timeoutEvent = NULL;
     timeout = 1.0;
 
     // Set the moduleIdName
-    cout<<"DockerApps."<<endl;
-
+    cout<<"DockerApps::initialize()"<<endl;
+    //printf("DockerApps.");
     osStream << "DockerApps." << getId();
     moduleIdName = osStream.str();
 
+    // Init the super-class
+    UserJob::initialize();
+
     // App Module parameters
     startDelay = par ("startDelay");
-    inputSize  = par ("inputSize");
+    inputSizeMB  = par ("inputSize");
+    outputSizeMB  = par ("outputSize");
     MIs  = par ("MIs");
-    hitsPerHour = par ("hitsPerHour").longValue();
-    uptimeLimit = par("uptimeLimit").longValue();
-    intervalHit = (3600.0 / (double) hitsPerHour);
 
-    pendingHits = 0;
-
-    if (uptimeLimit != 0) uptimeLimit = uptimeLimit + simTime().dbl();
+    iterations  = par ("iterations");
+    currentIteration = 1;
 
     // Service times
     total_service_IO = 0.0;
@@ -47,10 +40,10 @@ void DockerApps::initialize(){
     endServiceIO = 0.0;
     startServiceCPU = 0.0;
     endServiceCPU = 0.0;
-    readOffset = 0;
+    readOffset = writeOffset = 0;
 
     // Boolean variables
-    executeCPU = executeRead = false;
+    executeCPU = executeRead = executeWrite = false;
 
     // Assign names to the results
     jobResults->newJobResultSet("totalIO");
@@ -60,65 +53,65 @@ void DockerApps::initialize(){
 
 }
 
-void DockerApps::startExecution (){
-
-    API_OS::startExecution();
-    Enter_Method_Silent();  //zahra nikdel
-
-    // Create SM_WAIT_TO_EXECUTE message for delaying the execution of this application
-    // Initialize ..
-    newIntervalEvent = new cMessage ("intervalEvent");
-    cMessage *waitToExecuteMsg = new cMessage (SM_WAIT_TO_EXECUTE.c_str());
-    scheduleAt (simTime()+startDelay, waitToExecuteMsg);
-}
 
 void DockerApps::finish(){
-
     // Finish the super-class
-    UserJob::finish();
+    cout<<"DockerApps::finish   START"<<endl;
+    cout<<endl;
+
+   UserJob::finish();
+
+   cout<<"DockerApps::finish   END"<<endl;
+
+
+}
+
+void DockerApps::startExecution (){
+
+    cout<<"DockerApps::startExecution   START"<<endl;
+
+    API_OS::startExecution();
+
+    Enter_Method_Silent();
+    // Create SM_WAIT_TO_EXECUTE message for delaying the execution of this application
+    cMessage *waitToExecuteMsg = new cMessage (SM_WAIT_TO_EXECUTE.c_str());
+    scheduleAt (simTime()+startDelay, waitToExecuteMsg);
+
+    cout<<"DockerApps::startExecution   END"<<endl;
 
 }
 
 void DockerApps::processSelfMessage (cMessage *msg){
+    cout<<"DockerApps::processSelfMessage   START"<<endl;
 
-    SimTime nextEvent;
+    if (!strcmp (msg->getName(), SM_WAIT_TO_EXECUTE.c_str())){
 
-        if (!strcmp (msg->getName(), SM_WAIT_TO_EXECUTE.c_str())){
+        // Starting time...
+        simStartTime = simTime();
+        runStartTime = time (NULL);
 
-            // Starting time...
-            simStartTime = simTime();
-            runStartTime = time (NULL);
-            cancelAndDelete(msg);
-            // Init...
-            scheduleAt (simTime()+ intervalHit, newIntervalEvent);
+        // Init...
+        startServiceIO = simTime();
 
-        } else if (!strcmp (msg->getName(), "intervalEvent")){
+        executeIOrequest (false, true);
 
-           newHit();
+    }else
 
-           // A set of hits each second
-           if ((uptimeLimit >= simTime().dbl()) || (uptimeLimit == 0)){
-               cancelEvent(msg);
-               scheduleAt (simTime()+ intervalHit, newIntervalEvent);
-           } else {
-               uptimeLimit = -1;
-               cancelAndDelete(msg);
-           }
+        showErrorMessage ("Unknown self message [%s]", msg->getName());
 
-        }else{
-
-            showErrorMessage ("Unknown self message [%s]", msg->getName());
-            cancelAndDelete(msg);
-        }
-
+    delete (msg);
+    cout<<"DockerApps::processSelfMessage   END"<<endl;
 
 }
+
 
 void DockerApps::processRequestMessage (icancloud_Message *sm){
 
 }
 
+
 void DockerApps::processResponseMessage (icancloud_Message *sm){
+    cout<<"DockerApps::processResponseMessage   START"<<endl;
 
     icancloud_App_IO_Message *sm_io;
     icancloud_App_CPU_Message *sm_cpu;
@@ -145,12 +138,15 @@ void DockerApps::processResponseMessage (icancloud_Message *sm){
                 // All ok!
                 if (sm_io->getResult() == icancloud_OK){
                     executeCPU = true;
+                    executeWrite = false;
                     executeRead = false;
+                    delete (sm);
                 }
 
                 // File not found!
                 else if (sm_io->getResult() == icancloud_FILE_NOT_FOUND){
-                    osStream << "File not found!";                  isError = true;
+                    osStream << "File not found!";
+                    isError = true;
                 }
 
                 // File not found!
@@ -166,6 +162,36 @@ void DockerApps::processResponseMessage (icancloud_Message *sm){
             }
 
 
+            // Write response!
+            else if (operation == SM_WRITE_FILE){
+                // All ok!
+                if (sm_io->getResult() == icancloud_OK){
+                    executeCPU = false;
+                    executeWrite = false;
+                    executeRead = true;
+                    currentIteration++;
+                    delete (sm);
+                }
+
+                // File not found!
+                else if (sm_io->getResult() == icancloud_FILE_NOT_FOUND){
+                    osStream << "File not found!";
+                    isError = true;
+                }
+
+                // File not found!
+                else if (sm_io->getResult() == icancloud_DISK_FULL){
+                    osStream << "Disk full!";
+                    isError = true;
+                }
+
+                // Unknown result!
+                else{
+                    osStream << "Unknown result value:" << sm_io->getResult();
+                    isError = true;
+                }
+            }
+
             // Unknown I/O operation
             else{
                 osStream << "Unknown received response message";
@@ -174,8 +200,8 @@ void DockerApps::processResponseMessage (icancloud_Message *sm){
 
             // Increase total time for I/O
             total_service_IO += (endServiceIO - startServiceIO);
-
         }
+
 
         // Response came from CPU system
         else if (sm_cpu != NULL){
@@ -185,11 +211,10 @@ void DockerApps::processResponseMessage (icancloud_Message *sm){
 
             // CPU!
             if (operation == SM_CPU_EXEC){
-
-                pendingHits--;
-                if ((pendingHits == 0) && (uptimeLimit == -1)){
-                    printResults();
-                }
+                executeCPU = false;
+                executeWrite = true;
+                executeRead = false;
+                delete (sm);
             }
 
             // Unknown CPU operation
@@ -225,8 +250,12 @@ void DockerApps::processResponseMessage (icancloud_Message *sm){
             }
 
             // IO?
-            else if (executeRead){
-                    serveWebCode();
+            else if ((executeRead) || (executeWrite)){
+
+                if ((executeRead) && (currentIteration > iterations))
+                    printResults();
+                else
+                    executeIOrequest(executeRead, executeWrite);
             }
 
             // Inconsistency error!
@@ -235,7 +264,9 @@ void DockerApps::processResponseMessage (icancloud_Message *sm){
                                     osStream.str().c_str(),
                                     sm->contentsToString(true).c_str());
 
-            delete (sm);
+
+            cout<<"DockerApps::processResponseMessage   END"<<endl;
+
 }
 
 
@@ -244,64 +275,69 @@ void DockerApps::changeState(string newState){
 }
 
 
-void DockerApps::newHit(){
-    pendingHits++;
-    startServiceIO = simTime();
-    serveWebCode ();
-}
+void DockerApps::executeIOrequest(bool executeRead, bool executeWrite){
+    cout<<"DockerApps::executeIOrequest   START"<<endl;
 
-
-void DockerApps::serveWebCode(){
-Enter_Method_Silent();
     // Reset timer!
     startServiceIO = simTime();
 
-    // Executes read operation
-        if ((readOffset+(inputSize*MB))>=MAX_FILE_SIZE)
+    // Executes I/O operation
+    if (executeRead){
+
+        if ((readOffset+(inputSizeMB*MB))>=MAX_FILE_SIZE)
             readOffset = 0;
 
         if (DEBUG_Application)
-            showDebugMessage ("Executing (Read) Offset:%d; dataSize:%d", readOffset,  inputSize*MB);
+            showDebugMessage ("[%d/%d] Executing (Read) Offset:%d; dataSize:%d", currentIteration, iterations, readOffset,  inputSizeMB*MB);
 
-        icancloud_request_read (INPUT_FILE, readOffset, inputSize*KB);
-        readOffset += (inputSize*KB);
+        icancloud_request_read (INPUT_FILE, readOffset, inputSizeMB*MB);
+        readOffset += (inputSizeMB*MB);
+
+
+    }
+    else{
+
+        if ((writeOffset+(outputSizeMB*MB))>=MAX_FILE_SIZE)
+            writeOffset = 0;
+
+        if (DEBUG_Application)
+            showDebugMessage ("[%d/%d] Executing (Write) Offset:%d; dataSize:%d", currentIteration, iterations, writeOffset,  outputSizeMB*MB);
+
+        icancloud_request_write (OUTPUT_FILE, writeOffset, outputSizeMB*MB);
+        writeOffset += (outputSizeMB*MB);
+    }
+
+
+    cout<<"DockerApps::executeIOrequest   END"<<endl;
 
 }
 
 
 void DockerApps::executeCPUrequest(){
-    Enter_Method_Silent();
+    cout<<"DockerApps::executeCPUrequest   START"<<endl;
 
     // Debug?
     if (DEBUG_Application)
-        showDebugMessage ("Executing (CPU) MIs:%d", MIs);
+        showDebugMessage ("[%d/%d] Executing (CPU) MIs:%d", currentIteration, iterations, MIs);
 
     // Reset timer!
     startServiceCPU = simTime ();
     icancloud_request_cpu (MIs);
+
+
+    cout<<"DockerApps::executeCPUrequest   END"<<endl;
+
 }
 
 
 void DockerApps::printResults (){
+    cout<<"DockerApps::printResults   START"<<endl;
 
     std::ostringstream osStream;
 
     //Init..
         simEndTime = simTime();
         runEndTime = time (NULL);
-        printf("App [%s] - Simulation time:%f - Real execution time:%f - IO:%f  CPU:%f",
-        moduleIdName.c_str(),
-        (simEndTime-simStartTime).dbl(),
-        (difftime (runEndTime,runStartTime)),
-        total_service_IO.dbl(),
-        total_service_CPU.dbl());
-
-        showResultMessage ("App [%s] - Simulation time:%f - Real execution time:%f - IO:%f  CPU:%f",
-                                   moduleIdName.c_str(),
-                                   (simEndTime-simStartTime).dbl(),
-                                   (difftime (runEndTime,runStartTime)),
-                                   total_service_IO.dbl(),
-                                   total_service_CPU.dbl());
 
     //Assign values to the results
         osStream <<  total_service_IO.dbl();
@@ -320,8 +356,13 @@ void DockerApps::printResults (){
         jobResults->setJobResult(3, osStream.str());
 
         addResults(jobResults);
+
     //Send results list to the cloudManager
         userPtr->notify_UserJobHasFinished(this);
 
+
+        cout<<"DockerApps::printResults   END"<<endl;
+
 }
+
 

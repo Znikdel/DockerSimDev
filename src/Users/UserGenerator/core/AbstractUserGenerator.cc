@@ -44,7 +44,7 @@ AbstractUserGenerator::~AbstractUserGenerator() {
 }
 
 void AbstractUserGenerator::initialize(){
-
+cout<< "AbstractUserGenerator::initialize    START"<<endl;
 	// Init the superclass
 		icancloud_Base::initialize();
         struct tm * timeinfo;
@@ -141,10 +141,16 @@ void AbstractUserGenerator::initialize(){
                     jobSel->replicas = getParentModule()->getSubmodule("appDefinition")->getSubmodule("application",i)->par("copies").longValue();
                     jobSel->appName = getParentModule()->getSubmodule("appDefinition")->getSubmodule("application",i)->par("name").stringValue();
                     jobSel->isDockerized = getParentModule()->getSubmodule("appDefinition")->getSubmodule("application",i)->par("isDockerized").boolValue();
-                    cout<<"job is dockerized jobsel--->"<< jobSel->isDockerized<<endl;
+                //    cout<<"job is dockerized jobsel--->"<< jobSel->isDockerized<<endl;
 
                     auxMod = getParentModule()->getSubmodule("appDefinition")->getSubmodule("application",i)->getSubmodule("app");
+                    //auxMod = getParentModule()->getSubmodule("appDefinition")->getSubmodule("application",i);
+
+
+               //     cout<<"auxMod-->"<<auxMod->getFullName()<<endl;
                     jobSel->job = dynamic_cast<UserJob*> (auxMod);
+
+              //      cout<<"job-->"<<jobSel->job->getFullName()<<endl;
 
                     jobSel->job->setOriginalName(jobSel->appName);
                     jobSel->job->setisDockerized(jobSel->isDockerized);
@@ -174,6 +180,9 @@ void AbstractUserGenerator::initialize(){
                     userJobSet.push_back(jobSel);
                 }
 
+                cout<< "AbstractUserGenerator::initialize    END"<<endl;
+
+
 }
 
 void AbstractUserGenerator::finish(){
@@ -190,7 +199,7 @@ void AbstractUserGenerator::finalizeUserGenerator(bool allowToExecute){
 };
 
 void AbstractUserGenerator::createUser (){
-
+cout<<"AbstractUserGenerator::createUser    START"<<endl;
 	//Set up the behaviorMod
 		cModuleType *modBehavior;
 		cModule* behaviorMod;
@@ -267,7 +276,7 @@ void AbstractUserGenerator::createUser (){
                             // Get the job
                                jobSelect = (*(userJobSet.begin()+j));
                                rep = jobSelect->replicas;
-                               cout<<"j=" <<j<<"---->app name ->"<<jobSelect->appName<<endl;
+                               cout<<"j=" <<j<<"---->appname is ->"<<jobSelect->appName<<endl;
                           //     cout<<"j=" <<j<<"---->isDockerized ->"<<jobSelect->isDockerized<<endl;
 
                            for (k = 0; ((int)k) < rep ;k++){
@@ -289,6 +298,10 @@ void AbstractUserGenerator::createUser (){
 		}catch (exception& e){
 			throw cRuntimeError("UserGenerator_cell::createUser->Error creating user %s\n",userID.c_str());
 		}
+
+
+		cout<<"AbstractUserGenerator::createUser    END"<<endl;
+
 }
 
 double AbstractUserGenerator::selectDistribution(){

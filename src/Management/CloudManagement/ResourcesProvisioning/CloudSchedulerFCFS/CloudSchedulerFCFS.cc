@@ -21,6 +21,7 @@ ICCLog csfifo_f;
 
 void CloudSchedulerFCFS::initialize(){
 
+    cout<<"CloudSchedulerFCFS::initialize     START"<<endl;
     AbstractCloudManager::initialize();
     minimum_percent_storageNode_free = 0.0;
     printNodePowerConsumption = false;
@@ -33,6 +34,8 @@ void CloudSchedulerFCFS::initialize(){
     maximum_number_of_processes_per_node = par("numberOfVMperNode");
 
     dc_EnergyConsumed = 0.0;
+    cout<<"CloudSchedulerFCFS::initialize     END"<<endl;
+
 
 }
 
@@ -66,6 +69,7 @@ void CloudSchedulerFCFS::setupScheduler(){
 }
 
 void CloudSchedulerFCFS::schedule (){
+    cout<<"CloudSchedulerFCFS::schedule     START"<<endl;
 
     if (DEBUG_CLOUD_SCHED) printf("\n Method[CLOUD_SCHEDULER]: -------> schedule\n");
 
@@ -102,7 +106,7 @@ void CloudSchedulerFCFS::schedule (){
                req =  getRequestByIndex(j);
 
                // Start with the vm allocation
-
+                   cout<<"numPendingRequests()   --> "<<numPendingRequests()<<endl;
                while ((j < (numPendingRequests())) && (req != NULL)){
 
                    req_st = dynamic_cast<StorageRequest*>(req);
@@ -165,11 +169,16 @@ void CloudSchedulerFCFS::schedule (){
 
                schedulerUnblock();
            }
+
+
+           cout<<"CloudSchedulerFCFS::schedule     END"<<endl;
+
 }
 
 AbstractNode* CloudSchedulerFCFS::selectNode (AbstractRequest* req){
 
-    if (DEBUG_CLOUD_SCHED) printf("\n Method[SCHEDULER_FIFO]: -------> select_nodes\n");
+    //if (DEBUG_CLOUD_SCHED)
+    printf("\n Method[SCHEDULER_FIFO]: -------> select_nodes\n");
 
 	// Define ..
         vector <int> set;
@@ -226,7 +235,8 @@ AbstractNode* CloudSchedulerFCFS::selectNode (AbstractRequest* req){
 
 vector<AbstractNode*> CloudSchedulerFCFS::selectStorageNodes (AbstractRequest* st_req){
 
-    if (DEBUG_CLOUD_SCHED) printf("\n Method[SCHEDULER_FIFO]: -------> selectStorageNode\n");
+    //if (DEBUG_CLOUD_SCHED)
+        printf("\n Method[SCHEDULER_FIFO]: -------> selectStorageNode\n");
 
     // Define ..
         int numNodesFs;
@@ -287,6 +297,7 @@ vector<AbstractNode*> CloudSchedulerFCFS::selectStorageNodes (AbstractRequest* s
 }
 
 vector<AbstractNode*> CloudSchedulerFCFS::remoteShutdown (AbstractRequest* req){
+    cout<<"CloudSchedulerFCFS::remoteShutdown     START"<<endl;
 
     // Define ..
         vector<AbstractNode*> nodes;
@@ -312,6 +323,7 @@ vector<AbstractNode*> CloudSchedulerFCFS::remoteShutdown (AbstractRequest* req){
         else
             nodes.clear();
 
+        cout<<"CloudSchedulerFCFS::remoteShutdown     END"<<endl;
 
         return nodes;
 

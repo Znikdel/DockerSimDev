@@ -27,6 +27,7 @@ AbstractCloudManager::~AbstractCloudManager() {
 }
 
 void AbstractCloudManager::initialize(){
+    cout<<"AbstractCloudManager::initialize     START"<<endl;
 
     // Define ..
         string initialVIP;
@@ -87,6 +88,9 @@ void AbstractCloudManager::initialize(){
         AbstractDCManager::initialize();
 
         configDone = false;
+
+        cout<<"AbstractCloudManager::initialize     END"<<endl;
+
 }
 
 void AbstractCloudManager::initManager (int totalNodes){
@@ -395,7 +399,7 @@ AbstractCloudUser* AbstractCloudManager::getUserFromId(int uId){
 }
 
 bool AbstractCloudManager::request_start_vm (RequestVM* req){
-
+cout<<"AbstractCloudManager::request_start_vm    START"<<endl;
     //Define ...
         AbstractNode* selectedNode;
         vector<VM*> attendedRequest_vms;
@@ -517,11 +521,16 @@ bool AbstractCloudManager::request_start_vm (RequestVM* req){
         user -> notify_UserRequestAttendeed(attendedRequest);
     }
 
+
+    cout<<"AbstractCloudManager::request_start_vm    END"<<endl;
+
+
     return notEnoughResources;
 
 }
 
 void AbstractCloudManager::request_shutdown_vm(RequestVM* req){
+    cout<<"AbstractCloudManager::request_shutdown_vm    START"<<endl;
 
     // Define ..
         VM* vm;
@@ -564,9 +573,14 @@ void AbstractCloudManager::request_shutdown_vm(RequestVM* req){
             req->eraseVM(0);
 
         }
+
+
+        cout<<"AbstractCloudManager::request_shutdown_vm    END"<<endl;
+
 }
 
 void AbstractCloudManager::linkVM (AbstractNode* node, VM* vm){
+    cout<<"AbstractCloudManager::linkVM    START"<<endl;
 
 	// link the node place to the base vm
 
@@ -574,10 +588,12 @@ void AbstractCloudManager::linkVM (AbstractNode* node, VM* vm){
 
         vm->changeState(MACHINE_STATE_OFF);
         vm->setPendingOperation(NOT_PENDING_OPS);
+        cout<<"AbstractCloudManager::linkVM    END"<<endl;
 
 }
 
 void AbstractCloudManager::unlinkVM(AbstractNode* node, VM* vm, bool turnOff){
+    cout<<"AbstractCloudManager::unlinkVM    START"<<endl;
 
     vm->shutdownVM();
 
@@ -594,6 +610,10 @@ void AbstractCloudManager::unlinkVM(AbstractNode* node, VM* vm, bool turnOff){
         if ((nodeVL->getNumProcessesRunning() == 0) && (nodeVL->getNumVMAllocated() == 0))
             node->turnOff();
     }
+
+
+    cout<<"AbstractCloudManager::unlinkVM    END"<<endl;
+
 }
 
 void AbstractCloudManager::closeVMConnections (vector<AbstractNode*> nodes, VM* vm){
@@ -633,6 +653,7 @@ void AbstractCloudManager::closeVMConnections (vector<AbstractNode*> nodes, VM* 
 }
 
 VM* AbstractCloudManager::create_VM (VM* vmImage, string vmName, cModule* parent){
+    cout<<"AbstractCloudManager::create_VM    START"<<endl;
 
 	//Define ...
 
@@ -676,6 +697,10 @@ VM* AbstractCloudManager::create_VM (VM* vmImage, string vmName, cModule* parent
 		vm->callInitialize();
 
 		return vm;
+
+
+	    cout<<"AbstractCloudManager::create_VM    END"<<endl;
+
 }
 
 void AbstractCloudManager::linkVMInternals (AbstractNode* node, VM* vm, bool migration){
@@ -812,6 +837,7 @@ void  AbstractCloudManager::unlinkVMInternals (AbstractNode* node, VM* vm, bool 
 }
 
 void AbstractCloudManager::notifyManager(icancloud_Message* msg){
+    cout<<"AbstractCloudManager::notifyManager    START"<<endl;
 
     int operation = msg->getOperation();
 
@@ -827,6 +853,10 @@ void AbstractCloudManager::notifyManager(icancloud_Message* msg){
     } else {
         showErrorMessage("AbstractCloudManager::notifyManager-->operation unknown: %i", msg->getOperation());
     }
+
+
+    cout<<"AbstractCloudManager::notifyManager    END"<<endl;
+
 }
 
 void AbstractCloudManager::notifyStorageConnectionSuccesful (int uId, int pId, int spId){
@@ -991,6 +1021,7 @@ void AbstractCloudManager::notifyFSFormatted(int uId, int pId, bool turnOffNode)
 }
 
 void AbstractCloudManager::notify_shutdown_vm (int uId, int pId, AbstractNode* node){
+    cout<<"AbstractCloudManager::notify_shutdown_vm    START"<<endl;
 
 // Define ..
     RequestVM* req;
@@ -1029,10 +1060,12 @@ void AbstractCloudManager::notify_shutdown_vm (int uId, int pId, AbstractNode* n
     }
 
     freeResources (uId, pId, node);
+    cout<<"AbstractCloudManager::notify_shutdown_vm    END"<<endl;
 
 }
 
 void AbstractCloudManager::notifyVMConnectionsClosed (int uId, int pId, bool turnOff){
+    cout<<"AbstractCloudManager::notifyVMConnectionsClosed    START"<<endl;
 
     // Define ..
         PendingConnectionDeletion* pendingConnectionUnit;
@@ -1119,5 +1152,9 @@ void AbstractCloudManager::notifyVMConnectionsClosed (int uId, int pId, bool tur
             }
 
         }
+
+
+        cout<<"AbstractCloudManager::notifyVMConnectionsClosed    END"<<endl;
+
 }
 

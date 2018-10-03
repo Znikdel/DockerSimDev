@@ -4,9 +4,8 @@
 #include <omnetpp.h>
 #include "UserJob.h"
 
-
 /**
- * @class ServerApplication ServerApplication.h "ServerApplication.h"
+ * @class DockerApps DockerApps.h "DockerApps.h"
  *
  * Example of a sequential application without traces.
  * This application alternates I/O operations with CPU.
@@ -15,139 +14,148 @@
  *
  * - startDelay (Starting delay time)
  *
- * @author Gabriel González Castañé
- * @date 2013-12-1
+ * @author Alberto N&uacute;&ntilde;ez Covarrubias
+ * @date 2009-03-13
+ *
+ * @author updated to iCanCloud by Gabriel González Castañé
+ * @date 2013-12-17
  *
  */
-
-#define DEBUG true
-
-class DockerApps: public UserJob{
-
-    protected:
-
-        /** Size of data chunk to read in each iteration */
-        int inputSize;
-
-        /** Number of Instructions to execute */
-        int MIs;
-
-        /** Starting time delay */
-        unsigned int startDelay;
-
-        /** Simulation Starting timestamp */
-        simtime_t simStartTime;
-
-        /** Simulation Ending timestamp */
-        simtime_t simEndTime;
-
-        /** Running starting timestamp */
-        time_t runStartTime;
-
-        /** Running ending timestamp */
-        time_t runEndTime;
-
-        /** Call Starting timestamp (IO) */
-        simtime_t startServiceIO;
-
-        /** Call Ending timestamp (IO) */
-        simtime_t endServiceIO;
-
-        /** Call Starting timestamp (CPU) */
-        simtime_t startServiceCPU;
-
-        /** Call Ending timestamp (CPU) */
-        simtime_t endServiceCPU;
-
-        /** Spent time in CPU system */
-        simtime_t total_service_CPU;
-
-        /** Spent time in IO system */
-        simtime_t total_service_IO;
-
-        /** Execute CPU */
-        bool executeCPU;
-
-        /** Execute read operation */
-        bool executeRead;
-
-        /** Read Offset */
-        int readOffset;
-
-        /** Uptime limit*/
-        double uptimeLimit;
-        int hitsPerHour;
-        cMessage *newIntervalEvent;
-        double intervalHit;
-        int pendingHits;
+class DockerApps : public UserJob{
 
 
-       /**
-        * Destructor
-        */
-        ~DockerApps();
+	protected:
 
-       /**
-        *  Module initialization.
-        */
-        virtual void initialize();
+		/** Size of data chunk to read in each iteration */
+		int inputSizeMB;
+
+		/** Size of data chunk to write in each iteration */
+		int outputSizeMB;
+
+		/** Number of Instructions to execute */
+		int MIs;
+
+        /** Number of iterations */
+        unsigned int currentIteration;
+
+        /** Total iterations */
+        unsigned int iterations;
+
+		/** Starting time delay */
+		unsigned int startDelay;
+
+		/** Simulation Starting timestamp */
+		simtime_t simStartTime;
+
+		/** Simulation Ending timestamp */
+		simtime_t simEndTime;
+
+		/** Running starting timestamp */
+		time_t runStartTime;
+
+		/** Running ending timestamp */
+		time_t runEndTime;
+
+		/** Call Starting timestamp (IO) */
+		simtime_t startServiceIO;
+
+		/** Call Ending timestamp (IO) */
+		simtime_t endServiceIO;
+
+		/** Call Starting timestamp (CPU) */
+		simtime_t startServiceCPU;
+
+		/** Call Ending timestamp (CPU) */
+		simtime_t endServiceCPU;
+
+		/** Spent time in CPU system */
+		simtime_t total_service_CPU;
+
+		/** Spent time in IO system */
+		simtime_t total_service_IO;
+
+		/** Execute CPU */
+		bool executeCPU;
+
+		/** Execute read operation */
+		bool executeRead;
+
+		/** Execute write operation */
+		bool executeWrite;
+
+		/** Read Offset */
+		int readOffset;
+
+		/** Write Offset */
+		int writeOffset;
+
+
+
+	   /**
+		* Destructor
+		*/
+		~DockerApps();
+
+	   /**
+ 		*  Module initialization.
+ 		*/
+	    virtual void initialize();
+
+	   /**
+ 		* Module ending.
+ 		*/
+	    virtual void finish();
 
         /**
          * Start the app execution.
          */
-        void startExecution();
+        virtual void startExecution ();
 
-       /**
-        * Module ending.
-        */
-        virtual void finish();
+	   /**
+		* Process a self message.
+		* @param msg Self message.
+		*/
+		void processSelfMessage (cMessage *msg);
 
-       /**
-        * Process a self message.
-        * @param msg Self message.
-        */
-        void processSelfMessage (cMessage *msg);
+	   /**
+		* Process a request message.
+		* @param sm Request message.
+		*/
+		void processRequestMessage (icancloud_Message *sm);
 
-       /**
-        * Process a request message.
-        * @param sm Request message.
-        */
-        void processRequestMessage (icancloud_Message *sm);
+		/**
+		* Process a message from the cloudManager or the scheduler...
+		* @param sm message.
+		*/
+		void processSchedulingMessage (cMessage *msg);
 
-        /**
-        * Process a message from the cloudManager or the scheduler...
-        * @param sm message.
-        */
-        void processSchedulingMessage (cMessage *msg);
-
-       /**
-        * Process a response message.
-        * @param sm Request message.
-        */
-        void processResponseMessage (icancloud_Message *sm);
+	   /**
+		* Process a response message.
+		* @param sm Request message.
+		*/
+		void processResponseMessage (icancloud_Message *sm);
 
 
-        void changeState(string newState);
+		void changeState(string newState);
 
-    private:
+	private:
 
-        void newHit();
-       /**
-        * Method that creates and sends a new I/O request.
-        * @param executeRead Executes a read operation
-        * @param executeWrite Executes a write operation
-        */
-        void serveWebCode();
+	   /**
+		* Method that creates and sends a new I/O request.
+		* @param executeRead Executes a read operation
+		* @param executeWrite Executes a write operation
+		*/
+		void executeIOrequest(bool executeRead, bool executeWrite);
 
-       /**
-        * Method that creates and sends a CPU request.
-        */
-        void executeCPUrequest();
+	   /**
+		* Method that creates and sends a CPU request.
+		*/
+		void executeCPUrequest();
 
-       /**
-        * Print results.
-        */
-        void printResults();
+	   /**
+		* Print results.
+		*/
+		void printResults();
 
 };
 

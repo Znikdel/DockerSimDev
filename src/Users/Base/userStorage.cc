@@ -35,6 +35,7 @@ void userStorage::finish(){
 }
 
 vector<StorageRequest*> userStorage::createFSforJob(jobBase* job, string opIp, string nodeSetName, int nodeId, int optionalID){
+    cout<< "userStorage::createFSforJob  START"<<endl;
 
     // Define ..
         vector<StorageRequest*>::iterator reqIt;
@@ -73,6 +74,7 @@ vector<StorageRequest*> userStorage::createFSforJob(jobBase* job, string opIp, s
                                            waiting_for_remote_storage_Queue,
                                            waiting_for_remote_storage_Queue->get_queue_size());
         }
+        cout<< "userStorage::createFSforJob  START"<<endl;
 
         return requests_vector_storage;
 }

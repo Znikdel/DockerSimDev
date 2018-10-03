@@ -255,6 +255,7 @@ void SyscallManager::notifyManager (icancloud_Message* sms){
 }
 
 void SyscallManager::removeProcess(int pid){
+    cout<< "SyscallManager::removeProcess  START"<<endl;
 
     icancloud_Base* job = deleteJobFromStructures(pid);
 
@@ -268,12 +269,14 @@ void SyscallManager::removeProcess(int pid){
         job->callFinish();
 
     }
+    cout<< "SyscallManager::removeProcess  END"<<endl;
 
 }
 
 int SyscallManager::createProcess(icancloud_Base* job, int uid){
 
     if (job == NULL) throw cRuntimeError("SyscallManager::createJob, error with dynamic casting. Entry parameter cannot cast to jobBase.\n");
+    cout<< "SyscallManager::createProcess  START"<<endl;
 
     int newIndexFrom = fromAppGates->newGate("fromApps");
     int newIndexTo = toAppGates->newGate("toApps");
@@ -290,6 +293,7 @@ int SyscallManager::createProcess(icancloud_Base* job, int uid){
         proc->process = job;
         proc->uid = uid;
         processesRunning.push_back(proc);
+        cout<< "SyscallManager::createProcess  END"<<endl;
 
     return newIndexTo;
 

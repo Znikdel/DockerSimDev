@@ -43,6 +43,7 @@ void AbstractCloudUser::initialize(){
 void AbstractCloudUser::finish(){
 
         // Parameter to be used by userBehavior
+    cout<<"AbstractCloudUser::finish()   START"<<endl;
 
             vmListToExecute.clear();
             vms_waiting_remote_st.clear();
@@ -53,6 +54,8 @@ void AbstractCloudUser::finish(){
                 pending_jobs[0]->deleteModule();
             }
     AbstractUser::finish();
+    cout<<"AbstractCloudUser::finish()   END"<<endl;
+
 }
 
 void AbstractCloudUser::processSelfMessage (cMessage *msg){
@@ -74,7 +77,7 @@ bool AbstractCloudUser::finalizeUser (){
 }
 
 void AbstractCloudUser::createVMSet (int vmsQuantity, int numCores, int memorySizeMB, int storageSizeGB, int numNetIF, string vmSelectionType){
-
+cout<<"AbstractCloudUser::createVMSet  START"<<endl;
     userVmType* vms;
     elementType* el;
     bool found = false;
@@ -208,6 +211,7 @@ bool AbstractCloudUser::checkAllVMShutdown(){
 }
 
 int AbstractCloudUser::allocateJob(jobBase* job){
+    cout<< "AbstractCloudUser::allocateJob  START"<<endl;
 
     // Define ..
         cModule* syscallManager;
@@ -234,11 +238,18 @@ int AbstractCloudUser::allocateJob(jobBase* job){
            commId =  osCore->createProcess(jobC, this->getId());
 
 
+           cout<< "AbstractCloudUser::allocateJob  END"<<endl;
+
+
         return commId;
 }
 
 void AbstractCloudUser::deleteJobVM (VM* vm, UserJob* job){
+    cout<<"AbstractCloudUser::deleteJobVM  START for VM"<<vm->getFullName()<<endl;
     vm->removeProcess(job->getId());
+
+    cout<<"AbstractCloudUser::deleteJobVM  END for VM"<<vm->getFullName()<<endl;
+
 }
 
 void AbstractCloudUser::deleteAllJobsVM (VM* vm){
@@ -360,6 +371,7 @@ void AbstractCloudUser::executePendingJobs(){
 }
 
 void AbstractCloudUser::notify_UserJobHasFinished (jobBase* job){
+    cout<<"AbstractCloudUser::notify_UserJobHasFinished  START"<<endl;
 
     string jobID;
     int wqs = getWQ_size();
@@ -380,6 +392,7 @@ void AbstractCloudUser::notify_UserJobHasFinished (jobBase* job){
 
         // free the virtual machine
             VM* vm = check_and_cast<VM*>(jobC->getMachine());
+            cout << "VM who finished its job  ->"<< vm->getFullName()<<endl;
             deleteJobVM(vm , jobC);
 
 
@@ -396,6 +409,7 @@ void AbstractCloudUser::notify_UserJobHasFinished (jobBase* job){
 
 	}
 
+    cout<<"AbstractCloudUser::notify_UserJobHasFinished  END"<<endl;
 
 
 }

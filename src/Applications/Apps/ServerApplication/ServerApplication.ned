@@ -24,7 +24,7 @@ simple ServerApplication like IAPP
         @display("i=msg/job");
     gates:
         input fromOS @loose;								// Input gate from OS (Operating System)
-        output toOS @loose;									// Output gate to OS (Operating System)
+        output toOS @loose;	
 }
 
 

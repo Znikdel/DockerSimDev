@@ -77,7 +77,7 @@ void VM::changeState(string newState){
 
 
 void VM::shutdownVM (){
-
+cout<<"VM::shutdownVM"<<endl;
 	// Define ..
 		vector<int>::iterator jobIt;
 

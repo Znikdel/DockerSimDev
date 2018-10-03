@@ -67,6 +67,7 @@ AbstractUser* UserManagement::getUserByModuleID(int modID){
 // ----------------- Interact with users ----------------- //
 
 bool UserManagement::newUser (AbstractUser *user){
+    cout<<"UserManagement::newUser    START"<<endl;
 
     tenant_T* newUser;
 
@@ -83,7 +84,12 @@ bool UserManagement::newUser (AbstractUser *user){
         user->startUser();
       }
 
+
+      cout<<"UserManagement::newUser    END"<<endl;
+
     return admitted;
+
+
 
 }
 

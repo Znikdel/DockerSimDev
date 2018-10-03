@@ -78,7 +78,7 @@ cGate* AbstractSyscallManager::getOutGate (cMessage *msg){
 
 void AbstractSyscallManager::processSelfMessage(cMessage* msg){
 
-
+cout<<"AbstractSyscallManager::processSelfMessage    START"<<endl;
     icancloud_Message* hmsg;
 
     hmsg = dynamic_cast<icancloud_Message*>(msg);
@@ -86,7 +86,7 @@ void AbstractSyscallManager::processSelfMessage(cMessage* msg){
     if (hmsg->isSelfMessage()){
 
             bool found = false;
-
+            cout<<"pendingJobs.size"<<pendingJobs.size()<<endl;
             for (int i = 0; (i < (int)pendingJobs.size()) && (!found); i++){
                 if ((*(pendingJobs.begin() +i))->messageId == hmsg->getId()){
 
@@ -105,6 +105,8 @@ void AbstractSyscallManager::processSelfMessage(cMessage* msg){
     } else {
         throw cRuntimeError ("Unknown message at AbstractNode::handleMessage\n");
     }
+    cout<<"AbstractSyscallManager::processSelfMessage    END"<<endl;
+
 }
 
 void AbstractSyscallManager::processResponseMessage (icancloud_Message *sm){
@@ -136,6 +138,7 @@ void AbstractSyscallManager::removeAllProcesses(){
 }
 
 void AbstractSyscallManager::allocateJob(icancloud_Base* job, simtime_t timeToStart, int uId){
+    cout<< "AbstractSyscallManager::allocateJob  START"<<endl;
 
     // Define ..
         icancloud_Message* msg;
@@ -153,6 +156,7 @@ void AbstractSyscallManager::allocateJob(icancloud_Base* job, simtime_t timeToSt
         pendingJobs.push_back(p_job);
 
         scheduleAt (simTime()+timeToStart, msg);
+        cout<< "AbstractSyscallManager::allocateJob  END"<<endl;
 
 }
 

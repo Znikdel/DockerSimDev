@@ -21,6 +21,7 @@ jobBase::~jobBase() {
 
 
  void jobBase::initialize(){
+   //  cout<<"jobBase::initialize()"<<endl;
 
       appType = "";
       fsStructures.clear();
@@ -32,6 +33,7 @@ jobBase::~jobBase() {
  }
 
  void jobBase::finish(){
+   //  cout<<"jobBase::finish   Start"<<endl;
 
      //delete(jobResults);
      jobResults->finishJobResultsSet();
@@ -39,6 +41,8 @@ jobBase::~jobBase() {
      API_OS::finish();
      fsStructures.clear();
      preloadFiles.clear();
+  //   cout<<"jobBase::finish   END"<<endl;
+
  }
 
  double jobBase::getTimeToStart(){

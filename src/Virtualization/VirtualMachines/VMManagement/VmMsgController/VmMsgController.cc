@@ -313,6 +313,7 @@ void VmMsgController::updateCounters (icancloud_Message* msg, int quantity){
 
 void VmMsgController::linkNewApplication(cModule* jobAppModule, cGate* scToApp, cGate* scFromApp, bool isDockerized){
 
+    cout<< "VmMsgController::linkNewApplication  START"<<endl;
 
        cout<<"job is dockerized--->"<< isDockerized<<endl;
        if (!isDockerized){
@@ -350,10 +351,12 @@ void VmMsgController::linkNewApplication(cModule* jobAppModule, cGate* scToApp, 
                   daemon= dynamic_cast <DockerDaemon*>(this->getParentModule()->getSubmodule("dockerEngine"));
                   daemon->linkNewContainer(jobAppModule,toApps->getGate(idxToApps),fromApps->getGate(idxFromApps));
        }
+       cout<< "VmMsgController::linkNewApplication  END"<<endl;
 
 }
 
 int VmMsgController::unlinkApplication(cModule* jobAppModule, bool isDockerized){
+    cout<< "VmMsgController::unlinkApplication  START"<<endl;
 
     int gateIdx = jobAppModule->gate("fromOS")->getPreviousGate()->getId();
     int position = toApps->searchGate(gateIdx);
@@ -379,6 +382,7 @@ int VmMsgController::unlinkApplication(cModule* jobAppModule, bool isDockerized)
                daemon->unlinkContainer(jobAppModule);
 
     }
+    cout<< "VmMsgController::unlinkApplication  END"<<endl;
 
    return position;
 

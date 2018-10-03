@@ -24,6 +24,7 @@ UserJob::~UserJob() {
 
  void UserJob::initialize(){
 
+   //  cout<<"UserJob::initialize()"<<endl;
       appType = "";
       mPtr =NULL;
       fsStructures.clear();
@@ -39,11 +40,13 @@ UserJob::~UserJob() {
  }
 
  void UserJob::finish(){
+   //  cout<<"UserJob::finish   Start"<<endl;
 
      fsStructures.clear();
      preloadFiles.clear();
 
      jobBase::finish();
+   //  cout<<"UserJob::finish   END"<<endl;
 
  }
 

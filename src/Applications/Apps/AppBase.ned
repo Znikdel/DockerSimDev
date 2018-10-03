@@ -10,8 +10,9 @@ package icancloud.src.Applications.Apps;
 import icancloud.src.Applications.Apps.IAPP;
 import icancloud.src.Users.UserGenerator.PreloadFilesDefinition.PreloadFilesDefinition;
 import icancloud.src.Users.UserGenerator.FSUserDefinition.FSUserDefinition;
+import icancloud.src.Applications.Base.ContainerSink;
 
-module AppBase
+module AppBase 
 {
     parameters:
         string appType;					// The name of ned / folder / class of the application
@@ -19,19 +20,22 @@ module AppBase
         int copies = default(0);		// Number of replicas that will be launched at system 
         int numFSRoutes;				// Number of different routes that applications will need  
         int numFiles;					// Number of different files that applications will need 
-		bool isDockerized = default(true);
+        bool isDockerized = default(true);
+   
+     
     submodules:
 
         app: <appType> like IAPP {
             @display("p=65,103");
+           
         }
-        
+
         FSConfig[numFSRoutes]: FSUserDefinition {
-            @display("p=332,103");
+            @display("p=386,112");
         }
-        
+
         preloadFiles[numFiles]: PreloadFilesDefinition {
-            @display("p=186,103");
+            @display("p=195,142");
         }
 }
 

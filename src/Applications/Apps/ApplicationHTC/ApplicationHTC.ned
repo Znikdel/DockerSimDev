@@ -30,6 +30,6 @@ simple ApplicationHTC like IAPP
     gates:
 		input fromOS;			// Input gate from OS (Operating System)
 		output toOS;			// Output gate to OS (Operating System)
-
+ 	
 }
 

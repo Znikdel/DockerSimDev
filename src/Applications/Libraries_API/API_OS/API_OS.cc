@@ -7,7 +7,8 @@ API_OS::~API_OS(){
 }
 
 void API_OS::initialize(){
-	
+   // cout<<"API_OS::initialize() calls icancloud_Base::initialize()"<<endl;
+
 	// Init the super-class
 	icancloud_Base::initialize();
 
@@ -15,12 +16,16 @@ void API_OS::initialize(){
 
 
 void API_OS::finish(){
+  //  cout<<"API_OS::finish   Start"<<endl;
 
 	// Finish the super-class
 	icancloud_Base::finish();
+  //  cout<<"API_OS::finish   END"<<endl;
+
 }
 
 void API_OS::startExecution(){
+ //   printf("API_OS::startExecution   JUST DEFINES GATES FROMOS AND TOOS");
 
     fromOSGate = gate ("fromOS");
     toOSGate = gate ("toOS");

@@ -26,6 +26,7 @@ simple CPU_Intensive like IAPP
     gates:
         input fromOS @loose;			// Input gate from OS (Operating System)
         output toOS @loose;				// Output gate to OS (Operating System)
+ 	
 }
 
 
